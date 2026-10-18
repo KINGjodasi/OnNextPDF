@@ -1,12 +1,12 @@
 // OnNextPDF service worker: makes the app work offline.
 // The page itself (index.html) is always fetched fresh when online, so updates appear quickly.
 // If you change icons or library files, bump CACHE (v3, v4 ...) so everyone gets the new files.
-const CACHE = "onnextpdf-v3";
+const CACHE = "onnextpdf-v4";
 const FILES = [
   "./", "index.html", "manifest.webmanifest",
   "pdf-lib.min.js", "pdf.min.js", "pdf.worker.min.js", "jszip.min.js",
-  "icons/icon-192.png", "icons/icon-512.png", "icons/maskable-512.png",
-  "icons/apple-touch-icon.png", "icons/favicon-64.png"
+  "icon-192.png", "icon-512.png", "maskable-512.png",
+  "apple-touch-icon.png", "favicon-64.png"
 ];
 self.addEventListener("install", e => {
   // Cache each file separately so one missing file can never block the install.

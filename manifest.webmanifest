@@ -11,12 +11,12 @@
   "theme_color": "#0f1318",
   "categories": ["productivity", "utilities"],
   "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "shortcuts": [
-    { "name": "Images to PDF", "short_name": "Images → PDF", "url": "./", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
-    { "name": "PDF to Images", "short_name": "PDF → Images", "url": "./#pdf-to-images", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
+    { "name": "Images to PDF", "short_name": "Images → PDF", "url": "./", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] },
+    { "name": "PDF to Images", "short_name": "PDF → Images", "url": "./#pdf-to-images", "icons": [{ "src": "icon-192.png", "sizes": "192x192" }] }
   ]
 }
