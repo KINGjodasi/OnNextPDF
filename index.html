@@ -3,7 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>OnNextPDF: images to one PDF</title>
+<title>OnNextPDF By JODASI</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0f1318">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="OnNextPDF">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icons/favicon-64.png">
 <style>
 :root{--bg:#f6f7f9;--card:#fff;--ink:#14181f;--mute:#5b6572;--line:#d9dee5;--acc:#1f5eff;--acc-ink:#fff;--bad:#c62828;--ok:#1b7f3b;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1318;--card:#181e26;--ink:#eef1f5;--mute:#9aa5b3;--line:#2b3440;--acc:#6b9bff;--acc-ink:#0b1020;--bad:#ff8a80;--ok:#6fd48c;color-scheme:dark}}
@@ -40,13 +47,15 @@ select,input[type=number]{width:100%;margin-top:6px;padding:9px;border-radius:8p
 #status{color:var(--mute)}
 #status.err{color:var(--bad)}
 #status.ok{color:var(--ok)}
+.instbar{margin:-6px 0 12px;color:var(--mute);font-size:13px}.instbar .btn{margin:0 8px 0 0}
 .foot{margin-top:28px;color:var(--mute);font-size:13px}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>OnNextPDF              By JODASI</h1>
+  <h1>OnNextPDF By JODASI</h1>
   <p class="sub">Turn photos and scans into one PDF.</p>
+  <div class="instbar"><button class="btn alt" id="inst" hidden>Install app</button><span id="ioshint" hidden>On iPhone: tap Share, then “Add to Home Screen”.</span></div>
 
   <div class="drop" id="drop">
     <p>Drag images here, or choose them below</p>
@@ -75,13 +84,13 @@ select,input[type=number]{width:100%;margin-top:6px;padding:9px;border-radius:8p
 
   <div class="go">
     <button class="btn" id="make" disabled>Create OnNextPDF</button>
-    <button class="btn alt" id="save" hidden>Download OnNextPDF</button>
+    <button class="btn alt" id="save" hidden>Download PDF</button>
     <span id="status"></span>
   </div>
-  <p class="foot">Tip: use “Keep under” when a website limits upload size. The app will compress step by step until your PDF fits.</p>
+  <p class="foot">Everything happens on your device, so your files are never uploaded. Tip: use “Keep under” when a website limits upload size. The app will compress step by step until your PDF fits.</p>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="pdf-lib.min.js"></script>
 <script>
 (function(){
   var items=[], lastPdf=null, dragFrom=-1, busy=false;
@@ -219,13 +228,19 @@ select,input[type=number]{width:100%;margin-top:6px;padding:9px;border-radius:8p
     var dl=null;
     try{ if(window.claude&&window.claude.use) dl=await window.claude.use("downloads") }catch(e){}
     if(dl){
-      try{await dl.save({filename:"combined.pdf",data:lastPdf}); say("Saved.","ok")}
+      try{await dl.save({filename:"OnNextPDF.pdf",data:lastPdf}); say("Saved.","ok")}
       catch(e){ if(!e||e.code!=="declined") say("Couldn’t save the file here.","err") }
     }else{
-      var a=document.createElement("a"); a.href=URL.createObjectURL(lastPdf); a.download="combined.pdf";
+      var a=document.createElement("a"); a.href=URL.createObjectURL(lastPdf); a.download="OnNextPDF.pdf";
       document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){URL.revokeObjectURL(a.href)},4000);
     }
   };
+  var deferred=null;
+  window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();deferred=e;$("inst").hidden=false});
+  $("inst").onclick=async function(){if(!deferred)return;deferred.prompt();try{await deferred.userChoice}catch(e){}deferred=null;$("inst").hidden=true};
+  window.addEventListener("appinstalled",function(){$("inst").hidden=true});
+  if(/iphone|ipad|ipod/i.test(navigator.userAgent)&&!navigator.standalone) $("ioshint").hidden=false;
+  if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)) navigator.serviceWorker.register("sw.js").catch(function(){});
 })();
 </script>
 </body>

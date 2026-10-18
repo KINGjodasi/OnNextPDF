@@ -1,0 +1,18 @@
+{
+  "id": "./",
+  "name": "OnNextPDF By JODASI",
+  "short_name": "OnNextPDF",
+  "description": "Turn photos and scans into one PDF. Works offline and never uploads your files.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0f1318",
+  "theme_color": "#0f1318",
+  "categories": ["productivity", "utilities"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
