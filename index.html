@@ -20,16 +20,23 @@ html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
 .wrap{max-width:920px;margin:0 auto;padding:20px 16px 48px}
 h1{font-size:26px;margin:0 0 4px}
-.sub{color:var(--mute);margin:0 0 18px}
+.sub{color:var(--mute);margin:0 0 12px}
+.instbar{margin:0 0 14px;color:var(--mute);font-size:13px}
+.instbar .btn{margin:0 8px 6px 0;padding:7px 12px}
+#insthelp{display:block;margin-top:2px}
+.tabs{display:flex;gap:6px;margin:0 0 16px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px}
+.tabs button{flex:1;border:0;background:transparent;padding:10px;border-radius:9px;font-weight:600;color:var(--mute);cursor:pointer}
+.tabs button[aria-selected=true]{background:var(--acc);color:var(--acc-ink)}
 .drop{border:2px dashed var(--line);border-radius:14px;background:var(--card);padding:24px 16px;text-align:center}
 .drop.over{border-color:var(--acc)}
 .drop p{margin:0 0 12px;color:var(--mute)}
 button,select,input[type=number]{font:inherit;color:var(--ink)}
-.btn{background:var(--acc);color:var(--acc-ink);border:0;border-radius:10px;padding:10px 16px;font-weight:600;cursor:pointer;margin:4px}
+.btn{display:inline-block;text-decoration:none;text-align:center;background:var(--acc);color:var(--acc-ink);border:0;border-radius:10px;padding:10px 16px;font-weight:600;cursor:pointer;margin:4px}
 .btn.alt{background:transparent;color:var(--ink);border:1px solid var(--line)}
 .btn:disabled{opacity:.5;cursor:not-allowed}
+[hidden]{display:none!important}
 .opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:16px 0}
-label{display:block;font-size:12px;color:var(--mute);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+label.f{display:block;font-size:12px;color:var(--mute);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
 select,input[type=number]{width:100%;margin-top:6px;padding:9px;border-radius:8px;border:1px solid var(--line);background:var(--bg)}
 .bar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin:18px 0 8px}
 .bar b{font-size:16px}
@@ -42,55 +49,143 @@ select,input[type=number]{width:100%;margin-top:6px;padding:9px;border-radius:8p
 .row{display:flex;justify-content:center;gap:4px}
 .row button{background:transparent;border:1px solid var(--line);border-radius:8px;padding:5px 9px;cursor:pointer;min-width:34px}
 .row button.x{color:var(--bad)}
+.pg{position:relative;display:block;cursor:pointer}
+.pg input{position:absolute;top:12px;left:12px;width:20px;height:20px;accent-color:var(--acc)}
+.pg:has(input:not(:checked)){opacity:.5}
 .empty{color:var(--mute);text-align:center;padding:24px}
 .go{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-top:18px}
-#status{color:var(--mute)}
-#status.err{color:var(--bad)}
-#status.ok{color:var(--ok)}
-.instbar{margin:-6px 0 12px;color:var(--mute);font-size:13px}.instbar .btn{margin:0 8px 0 0}
+.status{color:var(--mute)}
+.status.err{color:var(--bad)}
+.status.ok{color:var(--ok)}
 .foot{margin-top:28px;color:var(--mute);font-size:13px}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>OnNextPDF           By JODASI</h1>
-  <p class="sub">Turn photos and scans into one PDF.</p>
-  <div class="instbar"><button class="btn alt" id="inst" hidden>Install app</button><span id="ioshint" hidden>”.You can install the app now</span></div>
+  <h1>OnNextPDF By JODASI</h1>
+  <p class="sub">Turn photos and scans into one PDF, or turn a PDF back into images.</p>
+  <div class="instbar" id="instbar"><button class="btn alt" id="inst">Install app</button><span id="insthelp" hidden></span></div>
 
-  <div class="drop" id="drop">
-    <p>Drag images here, or choose them below</p>
-    <button class="btn" id="pick">Add images</button>
-    <button class="btn alt" id="cam">Take a photo</button>
-    <input type="file" id="f1" accept="image/*" multiple hidden>
-    <input type="file" id="f2" accept="image/*" capture="environment" hidden>
+  <div class="tabs" role="tablist">
+    <button id="t1" role="tab" aria-selected="true">Images → PDF</button>
+    <button id="t2" role="tab" aria-selected="false">PDF → Images</button>
   </div>
 
-  <div class="opts">
-    <div><label for="size">Page size</label>
-      <select id="size"><option value="a4">A4</option><option value="letter">Letter</option><option value="fit">Fit to image</option></select></div>
-    <div><label for="ori">Orientation</label>
-      <select id="ori"><option value="auto">Automatic</option><option value="p">Portrait</option><option value="l">Landscape</option></select></div>
-    <div><label for="mar">Margin</label>
-      <select id="mar"><option value="0">None</option><option value="18" selected>Small</option><option value="36">Medium</option></select></div>
-    <div><label for="qual">Quality</label>
-      <select id="qual"><option value="hi">High</option><option value="mid" selected>Balanced</option><option value="lo">Small file</option></select></div>
-    <div><label for="tgt">Keep under (MB, optional)</label>
-      <input type="number" id="tgt" min="0.1" step="0.1" placeholder="e.g. 2"></div>
-  </div>
+  <!-- TAB 1: images to PDF -->
+  <section id="p1">
+    <div class="drop" id="drop">
+      <p>Drag images here, or choose them below</p>
+      <button class="btn" id="pick">Add images</button>
+      <button class="btn alt" id="cam">Take a photo</button>
+      <input type="file" id="f1" accept="image/*" multiple hidden>
+      <input type="file" id="f2" accept="image/*" capture="environment" hidden>
+    </div>
 
-  <div class="bar"><b id="count">No pages yet</b><button class="btn alt" id="clear" hidden>Clear all</button></div>
-  <div class="grid" id="grid"></div>
-  <div class="empty" id="empty">Your pages will appear here. Drag them to reorder, or use the arrows.</div>
+    <div class="opts">
+      <div><label class="f" for="size">Page size</label>
+        <select id="size"><option value="a4">A4</option><option value="letter">Letter</option><option value="fit">Fit to image</option></select></div>
+      <div><label class="f" for="ori">Orientation</label>
+        <select id="ori"><option value="auto">Automatic</option><option value="p">Portrait</option><option value="l">Landscape</option></select></div>
+      <div><label class="f" for="mar">Margin</label>
+        <select id="mar"><option value="0">None</option><option value="18" selected>Small</option><option value="36">Medium</option></select></div>
+      <div><label class="f" for="qual">Quality</label>
+        <select id="qual"><option value="hi">High</option><option value="mid" selected>Balanced</option><option value="lo">Small file</option></select></div>
+      <div><label class="f" for="tgt">Keep under (MB, optional)</label>
+        <input type="number" id="tgt" min="0.1" step="0.1" placeholder="e.g. 2"></div>
+    </div>
 
-  <div class="go">
-    <button class="btn" id="make" disabled>Create OnNextPDF</button>
-    <button class="btn alt" id="save" hidden>Download PDF</button>
-    <span id="status"></span>
-  </div>
-  <p class="foot">Everything happens on your device, so your files are never uploaded. Tip: use “Keep under” when a website limits upload size. The app will compress step by step until your PDF fits.</p>
+    <div class="bar"><b id="count">No pages yet</b><button class="btn alt" id="clear" hidden>Clear all</button></div>
+    <div class="grid" id="grid"></div>
+    <div class="empty" id="empty">Your pages will appear here. Drag them to reorder, or use the arrows.</div>
+
+    <div class="go">
+      <button class="btn" id="make" disabled>Create OnNextPDF</button>
+      <a class="btn alt" id="save" hidden>Download PDF</a>
+      <button class="btn alt" id="share" hidden>Share</button>
+      <span class="status" id="status"></span>
+    </div>
+  </section>
+
+  <!-- TAB 2: PDF to images -->
+  <section id="p2" hidden>
+    <div class="drop" id="drop2">
+      <p>Choose a PDF, or drag it here</p>
+      <button class="btn" id="pickpdf">Choose PDF</button>
+      <input type="file" id="pf" accept="application/pdf,.pdf" hidden>
+    </div>
+
+    <div class="opts">
+      <div><label class="f" for="fmt">Image format</label>
+        <select id="fmt"><option value="png">PNG (sharpest)</option><option value="jpg">JPG (smaller)</option></select></div>
+      <div><label class="f" for="res">Quality</label>
+        <select id="res"><option value="1.5">Standard</option><option value="2" selected>Sharp</option><option value="3">Very sharp</option></select></div>
+    </div>
+
+    <div class="bar"><b id="pcount">No PDF yet</b>
+      <span><button class="btn alt" id="all" hidden>Select all</button><button class="btn alt" id="none" hidden>Select none</button></span></div>
+    <div class="grid" id="pgrid"></div>
+    <div class="empty" id="pempty">The pages of your PDF will appear here. Tick the ones you want.</div>
+
+    <div class="go">
+      <button class="btn" id="conv" disabled>Convert to images</button>
+      <a class="btn alt" id="dl2" hidden>Download</a>
+      <button class="btn alt" id="share2" hidden>Share</button>
+      <span class="status" id="status2"></span>
+    </div>
+  </section>
+
+  <p class="foot">Everything happens on your device, so your files are never uploaded. Tip: use “Keep under” when a website limits upload size.</p>
 </div>
 
 <script src="pdf-lib.min.js"></script>
+<script src="pdf.min.js"></script>
+<script src="jszip.min.js"></script>
+
+<!-- shared helpers -->
+<script>
+window.ONP={
+  offer:function(blob,name,a,sh,label){
+    if(a._u) URL.revokeObjectURL(a._u);
+    a._u=URL.createObjectURL(blob); a.href=a._u; a.download=name; a.textContent=label; a.hidden=false;
+    try{
+      var f=new File([blob],name,{type:blob.type});
+      if(navigator.canShare&&navigator.canShare({files:[f]})){
+        sh.hidden=false; sh.onclick=function(){navigator.share({files:[f],title:name}).catch(function(){})};
+      }else sh.hidden=true;
+    }catch(e){sh.hidden=true}
+  }
+};
+</script>
+
+<!-- install, tabs, service worker -->
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  function tab(n){
+    $("p1").hidden=n!==1; $("p2").hidden=n!==2;
+    $("t1").setAttribute("aria-selected",n===1); $("t2").setAttribute("aria-selected",n===2);
+  }
+  $("t1").onclick=function(){tab(1)}; $("t2").onclick=function(){tab(2)};
+  if(location.hash==="#pdf-to-images") tab(2);
+
+  var standalone=(window.matchMedia&&matchMedia("(display-mode: standalone)").matches)||navigator.standalone;
+  if(standalone) $("instbar").hidden=true;
+  var deferred=null, ua=navigator.userAgent;
+  window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();deferred=e});
+  window.addEventListener("appinstalled",function(){$("instbar").hidden=true});
+  $("inst").onclick=async function(){
+    if(deferred){deferred.prompt();try{await deferred.userChoice}catch(e){}deferred=null;return}
+    var h=$("insthelp"), t;
+    if(/iphone|ipad|ipod/i.test(ua)) t="On iPhone or iPad, open this page in Safari, tap the Share button, then choose “Add to Home Screen”.";
+    else if(/android/i.test(ua)) t="Open the browser menu (⋮), then tap “Install app” or “Add to Home screen”.";
+    else t="Click the install icon at the right end of the address bar, or open the browser menu and choose “Install OnNextPDF”.";
+    h.textContent=t; h.hidden=!h.hidden;
+  };
+  if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)) navigator.serviceWorker.register("sw.js").catch(function(){});
+})();
+</script>
+
+<!-- TAB 1 logic -->
 <script>
 (function(){
   var items=[], lastPdf=null, dragFrom=-1, busy=false;
@@ -98,7 +193,7 @@ select,input[type=number]{width:100%;margin-top:6px;padding:9px;border-radius:8p
   var PRESET={hi:[2800,.9],mid:[2000,.8],lo:[1400,.65]};
   var LADDER=[[2000,.75],[1600,.65],[1300,.55],[1000,.45],[800,.35]];
 
-  function say(t,c){var s=$("status");s.textContent=t;s.className=c||""}
+  function say(t,c){var s=$("status");s.textContent=t;s.className="status "+(c||"")}
   function mb(n){return (n/1048576).toFixed(2)+" MB"}
 
   async function openImg(file){
@@ -148,7 +243,7 @@ select,input[type=number]{width:100%;margin-top:6px;padding:9px;border-radius:8p
     var n=items.length;
     $("count").textContent=n?n+(n===1?" page":" pages"):"No pages yet";
     $("empty").hidden=n>0; $("clear").hidden=!n; $("make").disabled=!n||busy;
-    lastPdf=null; $("save").hidden=true;
+    lastPdf=null; $("save").hidden=true; $("share").hidden=true;
   }
 
   $("grid").addEventListener("click",function(e){
@@ -166,7 +261,7 @@ select,input[type=number]{width:100%;margin-top:6px;padding:9px;border-radius:8p
     var c=e.target.closest(".card"); if(!c||dragFrom<0) return; e.preventDefault();
     var to=+c.dataset.i, m=items.splice(dragFrom,1)[0]; items.splice(to,0,m); dragFrom=-1; render();
   });
-  $("grid").addEventListener("dragend",function(){dragFrom=-1;render()});
+  $("grid").addEventListener("dragend",function(){if(dragFrom>-1){dragFrom=-1;render()}});
 
   var drop=$("drop");
   ["dragenter","dragover"].forEach(function(ev){drop.addEventListener(ev,function(e){if(e.dataTransfer&&Array.from(e.dataTransfer.types).includes("Files")){e.preventDefault();drop.classList.add("over")}})});
@@ -205,7 +300,7 @@ select,input[type=number]{width:100%;margin-top:6px;padding:9px;border-radius:8p
 
   $("make").onclick=async function(){
     if(busy||!items.length) return;
-    busy=true; $("make").disabled=true; $("save").hidden=true; say("Starting…");
+    busy=true; $("make").disabled=true; $("save").hidden=true; $("share").hidden=true; say("Starting…");
     try{
       var tgt=parseFloat($("tgt").value), limit=tgt>0?tgt*1048576:0;
       var steps=[PRESET[$("qual").value]]; if(limit) steps=steps.concat(LADDER);
@@ -217,30 +312,128 @@ select,input[type=number]{width:100%;margin-top:6px;padding:9px;border-radius:8p
       }
       lastPdf=new Blob([bytes],{type:"application/pdf"});
       var over=limit&&bytes.length>limit;
-      say((over?"Smallest I could make: ":"Ready: ")+items.length+(items.length===1?" page, ":" pages, ")+mb(bytes.length)+(over?" (above your limit)":""),over?"err":"ok");
-      $("save").hidden=false;
+      say((over?"Smallest I could make: ":"Ready: ")+items.length+(items.length===1?" page, ":" pages, ")+mb(bytes.length)+(over?" (above your limit)":"")+". Tap Download.",over?"err":"ok");
+      ONP.offer(lastPdf,"OnNextPDF.pdf",$("save"),$("share"),"Download PDF");
     }catch(e){say("Something went wrong: "+(e&&e.message?e.message:e),"err")}
     busy=false; $("make").disabled=!items.length;
   };
+})();
+</script>
 
-  $("save").onclick=async function(){
-    if(!lastPdf) return;
-    var dl=null;
-    try{ if(window.claude&&window.claude.use) dl=await window.claude.use("downloads") }catch(e){}
-    if(dl){
-      try{await dl.save({filename:"OnNextPDF.pdf",data:lastPdf}); say("Saved.","ok")}
-      catch(e){ if(!e||e.code!=="declined") say("Couldn’t save the file here.","err") }
-    }else{
-      var a=document.createElement("a"); a.href=URL.createObjectURL(lastPdf); a.download="OnNextPDF.pdf";
-      document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){URL.revokeObjectURL(a.href)},4000);
+<!-- TAB 2 logic: PDF to images -->
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  var pdf=null, pname="document", io=null, queue=[], pumping=false, busy=false;
+  if(window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc="pdf.worker.min.js";
+
+  function say(t,c){var s=$("status2");s.textContent=t;s.className="status "+(c||"")}
+  function chosen(){return Array.from($("pgrid").querySelectorAll("input:checked")).map(function(i){return +i.value})}
+  function refresh(){
+    var n=chosen().length, t=pdf?pdf.numPages:0;
+    $("pcount").textContent=pdf?(pname+": "+n+" of "+t+" pages selected"):"No PDF yet";
+    $("conv").disabled=!pdf||!n||busy;
+  }
+
+  async function pump(){
+    if(pumping) return; pumping=true;
+    while(queue.length){
+      var el=queue.shift(); if(!pdf||el._pdf!==pdf) continue;
+      try{
+        var page=await pdf.getPage(+el.dataset.n);
+        var v0=page.getViewport({scale:1}), k=240/Math.max(v0.width,v0.height), v=page.getViewport({scale:k});
+        var c=document.createElement("canvas"); c.width=Math.round(v.width); c.height=Math.round(v.height);
+        var g=c.getContext("2d"); g.fillStyle="#fff"; g.fillRect(0,0,c.width,c.height);
+        await page.render({canvasContext:g,viewport:v}).promise;
+        el.querySelector("img").src=c.toDataURL("image/jpeg",.7);
+        page.cleanup&&page.cleanup();
+      }catch(e){}
     }
+    pumping=false;
+  }
+
+  async function loadPdf(file){
+    if(!window.pdfjsLib){say("The PDF engine didn’t load. Reload the page and try again.","err");return}
+    if(io) io.disconnect(); queue=[]; pdf=null; $("pgrid").innerHTML=""; $("dl2").hidden=true; $("share2").hidden=true;
+    $("all").hidden=$("none").hidden=true; refresh();
+    say("Opening…");
+    var cancelled=false;
+    try{
+      var buf=new Uint8Array(await file.arrayBuffer());
+      var task=pdfjsLib.getDocument({data:buf});
+      task.onPassword=function(update,reason){
+        var p=prompt(reason===2?"Wrong password. Try again:":"This PDF is password protected. Enter the password:");
+        if(p===null){cancelled=true;task.destroy();return}
+        update(p);
+      };
+      pdf=await task.promise;
+    }catch(e){
+      pdf=null;
+      say(cancelled?"A password is needed to open this PDF.":"Couldn’t open that file. Is it a valid PDF?","err");
+      refresh(); return;
+    }
+    pname=file.name.replace(/\.pdf$/i,"")||"document";
+    $("pempty").hidden=true; $("all").hidden=$("none").hidden=false;
+    io=new IntersectionObserver(function(es){
+      es.forEach(function(e){if(e.isIntersecting){io.unobserve(e.target);queue.push(e.target);pump()}});
+    },{rootMargin:"300px"});
+    var frag=document.createDocumentFragment();
+    for(var n=1;n<=pdf.numPages;n++){
+      var l=document.createElement("label"); l.className="card pg"; l.dataset.n=n; l._pdf=pdf;
+      l.innerHTML='<input type="checkbox" checked><div class="th"><img alt=""></div><div class="cap">Page '+n+'</div>';
+      l.querySelector("input").value=n;
+      frag.appendChild(l);
+    }
+    $("pgrid").appendChild(frag);
+    Array.from($("pgrid").children).forEach(function(el){io.observe(el)});
+    say(pdf.numPages+(pdf.numPages===1?" page":" pages")+" found.","ok");
+    refresh();
+  }
+
+  $("pickpdf").onclick=function(){$("pf").click()};
+  $("pf").onchange=function(e){if(e.target.files[0]) loadPdf(e.target.files[0]); e.target.value=""};
+  var d=$("drop2");
+  ["dragenter","dragover"].forEach(function(ev){d.addEventListener(ev,function(e){if(e.dataTransfer&&Array.from(e.dataTransfer.types).includes("Files")){e.preventDefault();d.classList.add("over")}})});
+  ["dragleave","drop"].forEach(function(ev){d.addEventListener(ev,function(){d.classList.remove("over")})});
+  d.addEventListener("drop",function(e){var f=e.dataTransfer.files[0]; if(f){e.preventDefault();loadPdf(f)}});
+  $("pgrid").addEventListener("change",refresh);
+  $("all").onclick=function(){$("pgrid").querySelectorAll("input").forEach(function(i){i.checked=true});refresh()};
+  $("none").onclick=function(){$("pgrid").querySelectorAll("input").forEach(function(i){i.checked=false});refresh()};
+
+  $("conv").onclick=async function(){
+    var pages=chosen(); if(busy||!pdf||!pages.length) return;
+    busy=true; $("conv").disabled=true; $("dl2").hidden=true; $("share2").hidden=true;
+    var fmt=$("fmt").value, mime=fmt==="png"?"image/png":"image/jpeg", ext=fmt==="png"?"png":"jpg";
+    var scale=+$("res").value, MAXPX=16000000, pad=String(pdf.numPages).length;
+    var zip=pages.length>1?new JSZip():null, single=null;
+    try{
+      for(var i=0;i<pages.length;i++){
+        say("Converting page "+pages[i]+" ("+(i+1)+" of "+pages.length+")…");
+        var page=await pdf.getPage(pages[i]);
+        var vp=page.getViewport({scale:scale});
+        if(vp.width*vp.height>MAXPX) vp=page.getViewport({scale:scale*Math.sqrt(MAXPX/(vp.width*vp.height))});
+        var c=document.createElement("canvas"); c.width=Math.floor(vp.width); c.height=Math.floor(vp.height);
+        var g=c.getContext("2d"); g.fillStyle="#fff"; g.fillRect(0,0,c.width,c.height);
+        await page.render({canvasContext:g,viewport:vp}).promise;
+        var blob=await new Promise(function(r){c.toBlob(r,mime,.92)});
+        c.width=c.height=0; page.cleanup&&page.cleanup();
+        if(!blob) throw new Error("This page is too large for your device. Try a lower quality.");
+        var name=pname+"-page-"+String(pages[i]).padStart(pad,"0")+"."+ext;
+        if(zip) zip.file(name,blob); else single={blob:blob,name:name};
+        await new Promise(function(r){setTimeout(r,0)});
+      }
+      if(zip){
+        var out=await zip.generateAsync({type:"blob",compression:"STORE"},function(m){say("Packing images… "+Math.round(m.percent)+"%")});
+        ONP.offer(out,pname+"-images.zip",$("dl2"),$("share2"),"Download "+pages.length+" images (ZIP)");
+        say("Done. Tap Download.","ok");
+      }else{
+        ONP.offer(single.blob,single.name,$("dl2"),$("share2"),"Download image");
+        say("Done. Tap Download.","ok");
+      }
+    }catch(e){say("Something went wrong: "+(e&&e.message?e.message:e),"err")}
+    busy=false; refresh();
   };
-  var deferred=null;
-  window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();deferred=e;$("inst").hidden=false});
-  $("inst").onclick=async function(){if(!deferred)return;deferred.prompt();try{await deferred.userChoice}catch(e){}deferred=null;$("inst").hidden=true};
-  window.addEventListener("appinstalled",function(){$("inst").hidden=true});
-  if(/iphone|ipad|ipod/i.test(navigator.userAgent)&&!navigator.standalone) $("ioshint").hidden=false;
-  if("serviceWorker" in navigator&&/^https?:$/.test(location.protocol)) navigator.serviceWorker.register("sw.js").catch(function(){});
+  refresh();
 })();
 </script>
 </body>

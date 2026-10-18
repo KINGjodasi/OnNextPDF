@@ -2,7 +2,7 @@
   "id": "./",
   "name": "OnNextPDF By JODASI",
   "short_name": "OnNextPDF",
-  "description": "Turn photos and scans into one PDF. Works offline and never uploads your files.",
+  "description": "Turn photos into one PDF, or a PDF into images. Works offline and never uploads your files.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -14,5 +14,9 @@
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
     { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Images to PDF", "short_name": "Images → PDF", "url": "./", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "PDF to Images", "short_name": "PDF → Images", "url": "./#pdf-to-images", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
   ]
 }
