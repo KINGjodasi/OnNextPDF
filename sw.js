@@ -1,7 +1,7 @@
 // OnNextPDF service worker: makes the app work offline.
 // The page itself (index.html) is always fetched fresh when online, so updates appear quickly.
 // If you change icons or library files, bump CACHE (v3, v4 ...) so everyone gets the new files.
-const CACHE = "onnextpdf-v4";
+const CACHE = "onnextpdf-v5";
 const FILES = [
   "./", "index.html", "manifest.webmanifest",
   "pdf-lib.min.js", "pdf.min.js", "pdf.worker.min.js", "jszip.min.js",
